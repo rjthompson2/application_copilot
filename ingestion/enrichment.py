@@ -1,4 +1,4 @@
-from application_copilot.ingestion.utils import extract_seniority, extract_skills
+from ingestion.utils import extract_seniority, extract_skills
 
 async def enrich_job(page, url):
     # 1. NAVIGATION (safe mode)

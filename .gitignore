@@ -210,3 +210,4 @@ __marimo__/
 config.py
 auth.json
 jobs.db
+resume/file/*

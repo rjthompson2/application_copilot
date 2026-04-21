@@ -1,6 +1,6 @@
 import asyncio
 import random
-from application_copilot.config import SKILL_KEYWORDS
+from config import SKILL_KEYWORDS
 from playwright.async_api import async_playwright
 
 STORAGE_FILE = "auth.json"

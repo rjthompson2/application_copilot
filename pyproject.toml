@@ -1,0 +1,9 @@
+[project]
+name = "application_copilot"
+version = "0.1.0"
+description = "Job application automation system"
+authors = [{ name = "Riley Thompson" }]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]

@@ -1,8 +1,8 @@
 import asyncio
 from playwright.async_api import async_playwright
-from application_copilot.config import SEARCH_QUERY, LOCATION, MAX_PAGES, LINKEDIN_URL
-from application_copilot.database.database import insert_job
-from application_copilot.ingestion.utils import human_delay
+from config import SEARCH_QUERY, LOCATION, MAX_PAGES, LINKEDIN_URL
+from database.database import insert_job
+from ingestion.utils import human_delay
 
 
 async def discover_jobs(context, query, location):

@@ -1,31 +1,45 @@
 import asyncio
 from playwright.async_api import async_playwright
-from application_copilot.config import STORAGE_FILE
-from application_copilot.ingestion.scraper import discover_jobs
-from application_copilot.database.database import save_urls
-from application_copilot.ingestion.process_queue import process_queue
-
+from database.database import init_db, save_urls
+from ingestion.scraper import discover_jobs
+from ingestion.process_queue import process_queue
+from resume.resume import load_resume, build_user_profile
+from resume.ui import load_resume_interactive
+from config import SEARCH_QUERY, LOCATION, STORAGE_FILE, RESUME_FILE
 
 async def main():
+    # 1. INIT DATABASE
+    await init_db()
+
+    # 2. BUILD USER PROFILE
+
+    resume_text = load_resume_interactive()
+    profile = build_user_profile(resume_text)
+
+    print("Profile loaded:")
+    print(profile)
+
+    # 3. DISCOVER JOBS
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch()
 
-        context = await browser.new_context(storage_state="auth.json")
+        # load saved login session if exists
+        context = await browser.new_context(storage_state=STORAGE_FILE)
 
-        # 1. DISCOVER
         urls = await discover_jobs(
             context,
-            "backend engineer",
-            "United States"
+            query=SEARCH_QUERY,
+            location=LOCATION
         )
+        print(f"Discovered {len(urls)} jobs")
 
+        # 4. SAVE TO DB (queued)
         await save_urls(urls)
 
-        # 2. ENRICH
-        await process_queue(context)
-
-        await browser.close()
+        # 5. ENRICH + SCORE + FILTER
+        await process_queue(context, profile)
         
+        await browser.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

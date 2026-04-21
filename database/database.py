@@ -1,5 +1,5 @@
 import aiosqlite
-from application_copilot.config import DB_NAME
+from config import DB_NAME
 
 CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS jobs (
@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     skills TEXT,
     seniority TEXT,
     source TEXT,
+    score REAL,
+    embedding_score REAL,
     status TEXT DEFAULT 'queued',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -62,7 +64,7 @@ async def update_job(job_id, description, skills, seniority):
 
 
 async def save_urls(urls):
-    async with aiosqlite.connect("jobs.db") as db:
+    async with aiosqlite.connect(DB_NAME) as db:
         await db.execute("""
             CREATE TABLE IF NOT EXISTS jobs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,6 +75,8 @@ async def save_urls(urls):
                 description TEXT,
                 skills TEXT,
                 seniority TEXT,
+                score REAL,
+                embedding_score REAL,
                 status TEXT DEFAULT 'queued',
                 source TEXT
             )

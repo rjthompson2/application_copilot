@@ -6,5 +6,7 @@
   "skills": [],
   "seniority": "",
   "remote": true,
+  "score": "",
+  "embedding_score": "",
   "url": ""
 }
