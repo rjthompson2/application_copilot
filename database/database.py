@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     score REAL,
     embedding_score REAL,
     status TEXT DEFAULT 'queued',
+    embedding BLOB,
+    embedding_text_hash TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 """
@@ -77,6 +79,8 @@ async def save_urls(urls):
                 seniority TEXT,
                 score REAL,
                 embedding_score REAL,
+                embedding BLOB,
+                embedding_text_hash TEXT,
                 status TEXT DEFAULT 'queued',
                 source TEXT
             )

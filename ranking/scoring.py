@@ -1,5 +1,3 @@
-import re
-
 # USER PROFILE
 
 PREFERRED_ROLES = [

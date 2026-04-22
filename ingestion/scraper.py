@@ -1,8 +1,4 @@
 import asyncio
-from playwright.async_api import async_playwright
-from config import SEARCH_QUERY, LOCATION, MAX_PAGES, LINKEDIN_URL
-from database.database import insert_job
-from ingestion.utils import human_delay
 
 
 async def discover_jobs(context, query, location):
