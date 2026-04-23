@@ -211,3 +211,5 @@ config.py
 auth.json
 jobs.db
 resume/file/*
+faiss*.index
+faiss*.json

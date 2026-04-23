@@ -1,7 +1,9 @@
+import os
 import faiss
+import json
 import numpy as np
 import aiosqlite
-from config import DB_NAME
+from config import DB_NAME, FAISS_INDEX_PATH, FAISS_META_PATH
 
 async def build_faiss_index():
     index = FAISSIndex(dim=384)
@@ -33,6 +35,27 @@ async def build_faiss_index():
 
     print(f"FAISS index built: {valid} vectors, {skipped} skipped")
 
+    return index
+
+async def get_or_build_index():
+    if os.path.exists(FAISS_INDEX_PATH):
+        print("Loading FAISS index...")
+        return FAISSIndex.load()
+
+    print("Building FAISS index...")
+    index = FAISSIndex()
+
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(
+            "SELECT id, embedding FROM jobs WHERE embedding IS NOT NULL"
+        )
+        rows = await cursor.fetchall()
+
+    for job_id, emb_blob in rows:
+        emb = np.frombuffer(emb_blob, dtype=np.float32)
+        index.add(job_id, emb)
+
+    index.save()
     return index
 
 class FAISSIndex:
@@ -69,3 +92,26 @@ class FAISSIndex:
             })
 
         return results
+    
+    def save(self):
+        if self.index is None:
+            print("No index to save")
+            return
+
+        faiss.write_index(self.index, str(FAISS_INDEX_PATH))
+
+        with open(FAISS_META_PATH, "w") as f:
+            json.dump(self.job_ids, f)
+
+    @classmethod
+    def load(cls):
+        if not os.path.exists(FAISS_INDEX_PATH):
+            return cls()
+
+        index = cls()
+        index.index = faiss.read_index(FAISS_INDEX_PATH)
+
+        with open(FAISS_META_PATH, "r") as f:
+            index.job_ids = json.load(f)
+
+        return index
