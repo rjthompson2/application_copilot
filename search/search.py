@@ -1,5 +1,4 @@
 import aiosqlite
-import numpy as np
 from ranking.embeddings import get_embedding
 from ranking.faiss_index import get_or_build_index
 from config import DB_NAME

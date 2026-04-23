@@ -109,7 +109,7 @@ class FAISSIndex:
             return cls()
 
         index = cls()
-        index.index = faiss.read_index(FAISS_INDEX_PATH)
+        index.index = faiss.read_index(str(FAISS_INDEX_PATH))
 
         with open(FAISS_META_PATH, "r") as f:
             index.job_ids = json.load(f)
