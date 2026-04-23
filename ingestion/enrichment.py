@@ -37,23 +37,25 @@ def parse_meta_title(meta):
 
     meta = meta.replace(" | LinkedIn", "")
 
-    if " at " in meta:
+    if "|" in meta:
         title, company = meta.split("|")
         return title.strip(), company.strip()
 
     return meta.strip(), ""
 
 
-def extract_company_from_description(desc):
-    lines = desc.split("\n")
+def extract_location_from_description(description):
+    keyword = "Location:"
 
-    for line in lines[:10]:
-        line = line.strip()
+    for line in description.split("\n"):
+        clean = line.strip()
 
-        if " is a " in line or " company" in line:
-            return line.split(" is ")[0].strip()
-
-    return ""
+        if keyword.lower() in clean.lower():
+            parts = clean.split(":")
+            if len(parts) > 1:
+                value = parts[1].strip()
+                return value
+                
 
 
 def clean_text(text):
@@ -123,15 +125,15 @@ async def enrich_job(page, url):
         pass
 
     # 5. DESCRIPTION (About section)
+    section = page.locator("h2:has-text('About the job')")
     description = ""
 
-    try:
-        section = page.locator("h2:has-text('About the job')")
-        if await section.count() > 0:
-            container = section.locator("xpath=..")
+    if await section.count() > 0:
+        try:
+            container = section.locator("xpath=ancestor::*[3]")
             description = await container.inner_text()
-    except:
-        pass
+        except:
+            description = ""
 
     # fallback
     if not description:
@@ -172,7 +174,7 @@ async def enrich_job(page, url):
             location_body = line.strip()
             break
 
-    company_desc = extract_company_from_description(description)
+    location_desc = extract_location_from_description(description)
 
     # 8. BUILD CANDIDATES
     title = choose_best([
@@ -183,15 +185,21 @@ async def enrich_job(page, url):
     company = choose_best([
         (company_meta, CONFIDENCE["meta"]),
         (company_json, CONFIDENCE["jsonld"]),
-        (company_desc, CONFIDENCE["description"])
     ])
 
     location = choose_best([
         (location_dom, CONFIDENCE["dom"]),
-        (location_body, CONFIDENCE["body"])
+        (location_body, CONFIDENCE["body"]),
+        (location_desc, CONFIDENCE["description"])
     ])
     # 9. VALIDATION
-    missing = [k for k in REQUIRED_FIELDS if not locals().get(k)]
+    field_map = {
+        "title": title,
+        "company": company,
+        "location": location,
+    }
+
+    missing = [k for k, v in field_map.items() if not v or v != ""]
 
     if missing:
         print("Missing fields:", missing, url)

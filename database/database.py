@@ -1,5 +1,6 @@
 import aiosqlite
 from config import DB_NAME
+from ingestion.utils import normalize_url
 
 CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS jobs (
@@ -87,6 +88,7 @@ async def save_urls(urls):
         """)
 
         for url in urls:
+            url = normalize_url(url)
             await db.execute(
                 "INSERT OR IGNORE INTO jobs (url, status, source) VALUES (?, 'queued', 'linkedin')",
                 (url,)

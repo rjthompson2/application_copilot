@@ -1,5 +1,6 @@
 import asyncio
 import random
+from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
 STORAGE_FILE = "auth.json"
@@ -102,3 +103,8 @@ async def safe_attr(locator, attr):
         return await locator.first.get_attribute(attr, timeout=5000)
     except:
         return None
+    
+
+def normalize_url(url):
+    parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
