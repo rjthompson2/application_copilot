@@ -1,6 +1,6 @@
 import aiosqlite
 from ranking.embeddings import get_embedding
-from ranking.faiss_index import get_or_build_index
+from ranking.faiss_index import FAISSIndex
 from config import DB_NAME
 
 
@@ -9,7 +9,7 @@ async def search_jobs(resume_text: str, k=10):
     resume_embedding = get_embedding(resume_text)
 
     # 2. Load FAISS index
-    index = await get_or_build_index()
+    index = FAISSIndex.load()
 
     # 3. Search
     results = index.search(resume_embedding, k=k)
