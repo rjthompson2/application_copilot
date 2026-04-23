@@ -25,7 +25,7 @@ async def search_jobs(resume_text: str, k=10):
 
     async with aiosqlite.connect(DB_NAME) as db:
         cursor = await db.execute(
-            f"SELECT id, title FROM jobs WHERE id IN ({placeholders})",
+            f"SELECT id, title, company, location FROM jobs WHERE id IN ({placeholders})",
             job_ids
         )
         results = await cursor.fetchall()

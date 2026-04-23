@@ -12,7 +12,7 @@ async def main():
     print("\nTop Matches:\n")
 
     for i, job in enumerate(results, 1):
-        print(f"{i}. {job[1]}")
+        print(f"{i}. {job[1]} @ {job[2]} ({job[3]})")
 
 
 if __name__ == "__main__":
