@@ -16,6 +16,7 @@ async def search_jobs(resume_text: str, k=10):
     results = index.search(resume_embedding, k=k)
 
     job_ids = [r["job_id"] for r in results]
+    faiss_scores = [r["faiss_score"] for r in results]
 
     if not job_ids:
         return []
@@ -30,4 +31,4 @@ async def search_jobs(resume_text: str, k=10):
         )
         results = await cursor.fetchall()
 
-    return results
+    return results, faiss_scores

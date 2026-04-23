@@ -7,12 +7,12 @@ from config import RESUME_FILE
 async def main():
     resume_text = load_resume(RESUME_FILE)
 
-    results = await search_jobs(resume_text, k=10)
+    results, scores = await search_jobs(resume_text, k=10)
 
     print("\nTop Matches:\n")
 
     for i, job in enumerate(results, 1):
-        print(f"{i}. {job[1]} @ {job[2]} ({job[3]})")
+        print(f"{i}. {job[1]} @ {job[2]} ({job[3]}) - {scores[i-1]:.2f}")
 
 
 if __name__ == "__main__":

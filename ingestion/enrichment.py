@@ -5,11 +5,11 @@ REQUIRED_FIELDS = ["title", "company", "location"]
 
 # CONFIDENCE WEIGHTS
 CONFIDENCE = {
-    "meta": 1.0,
+    "meta": .99,
     "jsonld": 0.95,
     "dom": 0.7,
     "title_parse": 0.75,
-    "description": 0.6,
+    "description": 1.0,
     "body": 0.4
 }
 
@@ -199,12 +199,12 @@ async def enrich_job(page, url):
         "location": location,
     }
 
-    missing = [k for k, v in field_map.items() if not v or v != ""]
+    missing = [k for k, v in field_map.items() if v != ""]
 
     if missing:
         print("Missing fields:", missing, url)
 
-    # 10. RETURN
+    # 10. RETURN 
     return {
         "title": clean_text(title),
         "company": clean_text(company),
