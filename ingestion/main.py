@@ -3,22 +3,12 @@ from playwright.async_api import async_playwright
 from database.database import init_db, save_urls
 from ingestion.scraper import discover_jobs
 from ingestion.process_queue import process_queue
-from resume.resume import build_user_profile
-from resume.ui import load_resume_interactive
 from ranking.embeddings import get_embedding
 from config import SEARCH_QUERY, LOCATION, STORAGE_FILE, RESUME_FILE
 
 async def main():
     # 1. INIT DATABASE
     await init_db()
-
-    # 2. BUILD USER PROFILE -- Current WIP
-
-    # resume_text = load_resume_interactive()
-    # profile = build_user_profile(resume_text)
-
-    # print("Profile loaded:")
-    # print(profile)
 
     # 3. DISCOVER JOBS
     async with async_playwright() as p:

@@ -1,4 +1,5 @@
-from ingestion.utils import extract_seniority, extract_skills
+from ingestion.utils import extract_seniority
+from ranking.skills_map import extract_normalized_skills
 import json
 
 REQUIRED_FIELDS = ["title", "company", "location"]
@@ -192,6 +193,7 @@ async def enrich_job(page, url):
         (location_body, CONFIDENCE["body"]),
         (location_desc, CONFIDENCE["description"])
     ])
+
     # 9. VALIDATION
     field_map = {
         "title": title,
@@ -210,6 +212,6 @@ async def enrich_job(page, url):
         "company": clean_text(company),
         "location": clean_text(location),
         "description": description or "",
-        "skills": extract_skills(description or ""),
+        "skills": extract_normalized_skills(description or ""),
         "seniority": extract_seniority(description or "")
     }

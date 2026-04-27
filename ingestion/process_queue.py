@@ -2,6 +2,7 @@ from config import DB_NAME
 from ingestion.enrichment import enrich_job
 from ranking.cache import encode_and_cache
 from ranking.faiss_index import FAISSIndex
+from ranking.skills import extract_normalized_skills
 import numpy as np
 import aiosqlite
 
@@ -51,6 +52,10 @@ async def process_queue(context):
                     # ADD TO FAISS
                     index.add(job_id, embedding)
 
+                # SKILLS
+                skills_list = extract_normalized_skills(data.get("description", ""))
+                skills_str = ",".join(sorted(set(skills_list)))
+
                 # add all values into database
                 await db.execute("""
                     UPDATE jobs
@@ -63,12 +68,13 @@ async def process_queue(context):
                     data["company"],
                     data["location"],
                     data["description"],
-                    data["skills"],
+                    skills_str,  # ✅ normalized skills
                     data["seniority"],
                     emb_blob,
                     new_hash,
                     job_id
                 ))
+                
 
                 await db.commit()
 

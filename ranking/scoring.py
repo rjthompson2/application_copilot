@@ -53,3 +53,20 @@ def score_job(job, profile):
         score += 0.1
 
     return round(min(score, 1.0), 3)
+
+def compute_resume_score(job, profile, faiss_score):
+    job_skills = set((job.get("skills") or "").split(","))
+    profile_skills = profile.get("skills", {})
+
+    skill_score = 0
+    total_weight = sum(profile_skills.values()) + 1e-5
+
+    for skill, weight in profile_skills.items():
+        if skill in job_skills:
+            skill_score += weight
+
+    skill_score /= total_weight
+
+    final_score = (0.6 * faiss_score + 0.4 * skill_score)
+
+    return round(final_score, 3), skill_score

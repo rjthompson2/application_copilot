@@ -1,4 +1,6 @@
 import re
+from ranking.skills import extract_normalized_skills
+from resume.roles import extract_roles, parse_years
 
 def parse_resume(text):
     text = text.lower()
@@ -39,14 +41,113 @@ def load_resume(path):
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
-def build_user_profile(resume_text):
-    parsed = parse_resume(resume_text)
+KNOWN_SKILLS = [
+    "python", "aws", "sql", "java", "docker",
+    "flask", "react", "javascript", "typescript"
+]
 
-    skill_weights = {s: 2 for s in parsed["skills"]}
+
+def extract_years(text):
+    # crude date parsing
+    match = re.findall(r"(\w+\s\d{4})\s*[-–]\s*(Present|\w+\s\d{4})", text)
+
+    total_years = 0
+
+    for start, end in match:
+        try:
+            start_date = datetime.strptime(start, "%b %Y")
+            end_date = datetime.now() if end == "Present" else datetime.strptime(end, "%b %Y")
+
+            delta = (end_date - start_date).days / 365
+            total_years += max(delta, 0)
+        except:
+            continue
+
+    return total_years if total_years > 0 else 1  # fallback
+
+
+def build_user_profile(resume_text):
+    roles = extract_roles(resume_text)
+
+    skill_weights = {}
+
+    for role in roles:
+        years = parse_years(role["dates"])
+        skills = extract_normalized_skills(role["text"])
+
+        for skill in skills:
+            skill_weights[skill] = skill_weights.get(skill, 0) + years
+
+    # normalize
+    max_val = max(skill_weights.values(), default=1)
+
+    for k in skill_weights:
+        skill_weights[k] /= max_val
 
     return {
-        "skills": skill_weights,
-        "roles": parsed["roles"],
-        "experience_years": parsed["experience_years"]
+        "skills": skill_weights
     }
+    
+# def build_user_profile(resume_text):
+#     profile = {
+#         "skills": {},
+#         "titles": [],
+#         "seniority": ""
+#     }
+
+#     sections = resume_text.split("\n\n")
+
+#     for section in sections:
+#         years = extract_years(section)
+
+#         skills = extract_normalized_skills(section)
+
+#         for skill in skills:
+#             profile["skills"][skill] = profile["skills"].get(skill, 0) + years
+
+#     # normalize weights
+#     max_val = max(profile["skills"].values(), default=1)
+
+#     for k in profile["skills"]:
+#         profile["skills"][k] /= max_val
+
+#     return profile
+
+# # def build_user_profile(resume_text):
+# #     profile = {
+# #         "skills": {},
+# #         "titles": [],
+# #         "seniority": ""
+# #     }
+
+# #     sections = resume_text.split("\n\n")
+
+# #     for section in sections:
+# #         section_lower = section.lower()
+
+# #         years = extract_years(section)
+
+# #         for skill in KNOWN_SKILLS:
+# #             if skill in section_lower:
+# #                 profile["skills"][skill] = profile["skills"].get(skill, 0) + years
+
+# #     # normalize (optional)
+# #     max_years = max(profile["skills"].values(), default=1)
+
+# #     for skill in profile["skills"]:
+# #         profile["skills"][skill] /= max_years
+
+# #     return profile
+
+# # old version
+# # def build_user_profile(resume_text):
+# #     parsed = parse_resume(resume_text)
+
+# #     skill_weights = {s: 2 for s in parsed["skills"]}
+
+# #     return {
+# #         "skills": skill_weights,
+# #         "roles": parsed["roles"],
+# #         "experience_years": parsed["experience_years"]
+# #     }
     
