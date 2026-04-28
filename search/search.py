@@ -59,19 +59,25 @@ async def search_jobs(resume_text: str, profile, k=10):
             "skills": row[4] if len(row) > 4 else "",
         }
 
-        final_score, skill_score = compute_resume_score(
-            job,
-            profile,
-            faiss_scores[i]
-        )
+        if profile is not None:
+            final_score, skill_score = compute_resume_score(
+                job,
+                profile,
+                faiss_scores[i]
+            )
 
-        job["score"] = final_score
-        job["faiss_score"] = faiss_scores[i]
-        job["skill_score"] = skill_score
+            job["score"] = final_score
+            job["faiss_score"] = faiss_scores[i]
+            job["skill_score"] = skill_score
+        else:
+            job["faiss_score"] = faiss_scores[i]
 
         final_results.append(job)
 
     # sort by final score
-    final_results.sort(key=lambda x: x["score"], reverse=True)
+    if profile is not None:
+        final_results.sort(key=lambda x: x["score"], reverse=True)
+    else:
+        final_results.sort(key=lambda x: x["faiss_score"], reverse=True)
 
     return final_results

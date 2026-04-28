@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Matcher</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>Job Matches</h1>
+
+<button onclick="openModal()">Search Jobs</button>
+
+
+<hr>
+
+<div id="resumeModal" class="modal">
+    <div class="modal-content">
+        <h3>Would you like to use a resume?</h3>
+
+        <!-- Upload new -->
+        <form method="post" action="/search" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Upload & Search</button>
+        </form>
+
+        <!-- Use saved -->
+        <form method="post" action="/search">
+            <input type="hidden" name="use_saved" value="true">
+            <button type="submit">Use Saved Resume</button>
+        </form>
+
+        <!-- Continue without -->
+        <form method="post" action="/search">
+            <button type="submit">Continue Without Resume</button>
+        </form>
+
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById("resumeModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("resumeModal").style.display = "none";
+}
+</script>
+
+{% if has_resume %}
+<p style="color:green;">Using resume-based ranking</p>
+{% else %}
+<p style="color:gray;">Showing general job matches</p>
+{% endif %}
+
+{% for job in jobs %}
+<div class="job-card">
+
+    <h2>{{ job.title }}</h2>
+    <p><strong>{{ job.company }}</strong> — {{ job.location }}</p>
+
+    <p>
+        Overall Score: {{ "%.2f"|format(job.score) if job.score is defined else "N/A" }} |
+        FAISS: {{ "%.2f"|format(job.faiss_score) if job.faiss_score is defined else "N/A" }} |
+        Skill Score: {{ "%.2f"|format(job.skill_score) if job.skill_score is defined else "N/A" }}
+    </p>
+
+    <p><strong>Skills:</strong> {{ job.skills }}</p>
+
+    <form method="post" action="/save/{{ job.id }}">
+        <button type="submit">Save</button>
+    </form>
+
+    <form method="post" action="/apply/{{ job.id }}">
+        <button type="submit">Apply</button>
+    </form>
+
+</div>
+<hr>
+{% endfor %}
+
+</body>
+</html>
