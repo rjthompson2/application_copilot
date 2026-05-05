@@ -55,9 +55,9 @@ function closeModal() {
 {% endif %}
 
 {% for job in jobs %}
-<div class="job-card">
-
-    <h2>{{ job.title }}</h2>
+{% if job.show == 1 %}
+<div class="job-card" id="job-{{ job.id }}">
+    <h2><a href="{{ job.url }}"  target="_blank">{{ job.title }}</a></h2>
     <p><strong>{{ job.company }}</strong> — {{ job.location }}</p>
 
     <p>
@@ -68,17 +68,42 @@ function closeModal() {
 
     <p><strong>Skills:</strong> {{ job.skills }}</p>
 
-    <form method="post" action="/save/{{ job.id }}">
-        <button type="submit">Save</button>
-    </form>
+    <div class="button">
+        <button class="save-btn" data-id="{{ job.id }}">Save</button>
+    </div>
 
-    <form method="post" action="/apply/{{ job.id }}">
-        <button type="submit">Apply</button>
-    </form>
-
+    <div class="button">
+        <button class="delete-btn" data-id="{{ job.id }}">Delete</button>
+    </div>
+    <hr>
 </div>
-<hr>
+{% endif %}
 {% endfor %}
 
 </body>
+
+<script>
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("save-btn")) {
+            const jobId = e.target.dataset.id;
+
+            const res = await fetch(`/save/${jobId}`, {
+                method: "POST"
+            });
+        }
+    });
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("delete-btn")) {
+            const jobId = e.target.dataset.id;
+
+            const res = await fetch(`/delete/${jobId}`, {
+                method: "POST"
+            });
+
+            if (res.ok) {
+                document.getElementById(`job-${jobId}`).remove();
+            }
+        }
+    });
+</script>
 </html>

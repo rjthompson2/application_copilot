@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Form, UploadFile, File
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 import aiosqlite
 
 from search.search import search_jobs
@@ -63,47 +63,19 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
     )
 
 
-# @router.post("/search", response_class=HTMLResponse)
-# async def run_search(request: Request, file: UploadFile = File(None)):
-#     resume_text = None
-#     profile = None
-
-#     # Check if user uploaded a file
-#     if file and file.filename:
-#         content = await file.read()
-
-#         with open(RESUME_FILE, "wb") as f:
-#             f.write(content)
-
-#         resume_text = load_resume(RESUME_FILE)
-#         profile = build_user_profile(resume_text)
-
-#     # Run search (with or without profile)
-#     jobs = await search_jobs(resume_text, profile, k=20)
-
-#     return templates.TemplateResponse(
-#         "index.html",
-#         {
-#             "request": request,
-#             "jobs": jobs,
-#             "has_resume": profile is not None
-#         }
-#     )
-
-
 @router.post("/save/{job_id}")
 async def save_job(job_id: int):
     async with aiosqlite.connect(DB_NAME) as db:
-        await db.execute("UPDATE jobs SET saved=1 WHERE id=?", (job_id,))
+        await db.execute("UPDATE jobs SET status='saved' WHERE id=?", (job_id,))
         await db.commit()
 
-    return RedirectResponse("/", status_code=303)
+    return JSONResponse({"success": True, "job_id": job_id})
 
 
-@router.post("/apply/{job_id}")
-async def apply_job(job_id: int):
+@router.post("/delete/{job_id}")
+async def delete_job(job_id: int):
     async with aiosqlite.connect(DB_NAME) as db:
-        await db.execute("UPDATE jobs SET applied=1 WHERE id=?", (job_id,))
+        await db.execute("UPDATE jobs SET show='0' WHERE id=?", (job_id,))
         await db.commit()
 
-    return RedirectResponse("/", status_code=303)
+    return JSONResponse({"success": True, "job_id": job_id})

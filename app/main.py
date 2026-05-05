@@ -8,6 +8,5 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 templates = Jinja2Templates(directory="app/templates")
 
-# import routes
-from app.routes import router
+from app.routes import router # Must stay here to prevent circular import
 app.include_router(router)

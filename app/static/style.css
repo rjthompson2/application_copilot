@@ -21,3 +21,7 @@
 .modal-content form {
     margin: 10px 0;
 }
+
+.save-btn {
+    margin-bottom: 10px;
+}

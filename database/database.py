@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     score REAL,
     embedding_score REAL,
     status TEXT DEFAULT 'queued',
+    show BOOLEAN DEFAULT 1,
     embedding BLOB,
     embedding_text_hash TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -32,31 +32,27 @@ async def search_jobs(resume_text: str, profile, k=10):
 
     async with aiosqlite.connect(DB_NAME) as db:
         cursor = await db.execute(
-            f"SELECT id, title, company, location, skills, seniority FROM jobs WHERE id IN ({placeholders})",
+            f"SELECT id, title, company, location, skills, seniority, url, status, show FROM jobs WHERE id IN ({placeholders})",
             job_ids
         )
         results = await cursor.fetchall()
-        
-    # map jobs
-    job_map = {row[0]: {
-        "id": row[0],
-        "title": row[1],
-        "company": row[2],
-        "location": row[3],
-        "skills": row[4],
-        "seniority": row[5]
-    } for row in results}
 
     # 5. Apply hybrid scoring
     final_results = []
 
     for i, row in enumerate(results):
+        # map job values
+        print(row)
         job = {
             "id": row[0],
             "title": row[1],
             "company": row[2],
             "location": row[3],
             "skills": row[4] if len(row) > 4 else "",
+            "seniority": row[5],
+            "url": row[6],
+            'status': row[7],
+            'show': row[8]
         }
 
         if profile is not None:
