@@ -5,8 +5,11 @@ Copilot to help with job applications
 Within application_copilot folder, create config.py
 
 Add the following into your file:
+
 SEARCH_QUERY = "" # enter what job you wish to look for
+
 LOCATION = "" # enter where you wish to be located, remote will always be included no matter where you put
+
 MAX_PAGES = 3  # keep low to avoid detection
 
 2. Ingestion
