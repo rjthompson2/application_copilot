@@ -27,7 +27,7 @@ You must be in the application_copilot directory when you execute the command.
 
 # Step 3 Frontend
 
-Input the command from the application_copilot directory:
+Input this command while still in the application_copilot directory:
 
 univorn app.main:app --reload
 
