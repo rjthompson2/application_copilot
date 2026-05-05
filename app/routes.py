@@ -6,7 +6,7 @@ from search.search import search_jobs
 from app.main import templates
 from utils import DB_NAME, RESUME_FILE
 import os
-from resume.resume import build_user_profile, load_resume_file, load_resume
+from resume.resume import build_user_profile, load_resume, extract_upload
 
 
 router = APIRouter()
@@ -27,11 +27,9 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
 
     # Upload new resume
     if file and file.filename:
-        content = await file.read()
-        with open(RESUME_FILE, "wb") as f:
-            f.write(content)
-
-        resume_text = load_resume_file(RESUME_FILE)
+        resume_text = await extract_upload(file)
+        RESUME_FILE.write_text(resume_text, encoding="utf-8")
+        
         profile = build_user_profile(resume_text)
     
     # Use saved doesn't exist

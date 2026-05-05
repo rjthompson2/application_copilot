@@ -3,11 +3,14 @@ import os
 from ranking.skills import extract_normalized_skills
 from resume.roles import extract_roles, parse_years
 import pdfplumber
+import io
+from pypdf import PdfReader
 
 def load_resume_file(path):
-    if path.endswith(".pdf"):
+    print(path)
+    if path.suffix.lower() == ".pdf":
+        print("\n\n\n\n")
         with pdfplumber.open(path) as pdf:
-            print(400)
             print(pdf.pages)
             return "\n".join(page.extract_text() or "" for page in pdf.pages)
     else:
@@ -102,4 +105,19 @@ def build_user_profile(resume_text):
     return {
         "skills": skill_weights
     }
-    
+
+
+async def extract_upload(file):
+    content = await file.read()
+
+    filename = file.filename.lower()
+
+    # PDF
+    if filename.endswith(".pdf"):
+        reader = PdfReader(io.BytesIO(content))
+        return "\n".join(p.extract_text() or "" for p in reader.pages)
+
+    # DOCX needs to be implemented
+
+    # fallback (txt, csv, json, etc.)
+    return content.decode("utf-8", errors="ignore")
