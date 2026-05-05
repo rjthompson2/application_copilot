@@ -14,6 +14,7 @@ LOCATION = "" # enter where you wish to be located, remote will always be includ
 MAX_PAGES = 3  # keep low to avoid detection
 
 
+
 2. Ingestion
 
 After you have configured the settings to search for jobs you want, all you need to do is input the command:
@@ -21,6 +22,7 @@ After you have configured the settings to search for jobs you want, all you need
 python -m ingestion.main
 
 You must be in the application_copilot directory when you execute the command.
+
 
 
 3. Frontend
