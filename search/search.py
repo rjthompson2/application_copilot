@@ -3,7 +3,7 @@ import numpy as np
 from ranking.embeddings import get_embedding
 from ranking.faiss_index import FAISSIndex
 from ranking.scoring import compute_resume_score
-from config import DB_NAME
+from utils import DB_NAME
 
 
 async def search_jobs(resume_text: str, profile, k=10):

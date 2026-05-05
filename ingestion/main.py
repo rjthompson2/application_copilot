@@ -3,8 +3,8 @@ from playwright.async_api import async_playwright
 from database.database import init_db, save_urls
 from ingestion.scraper import discover_jobs
 from ingestion.process_queue import process_queue
-from ranking.embeddings import get_embedding
-from config import SEARCH_QUERY, LOCATION, STORAGE_FILE, RESUME_FILE
+from config import SEARCH_QUERY, LOCATION
+from utils import STORAGE_FILE
 
 async def main():
     # 1. INIT DATABASE

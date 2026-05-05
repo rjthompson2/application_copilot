@@ -1,7 +1,7 @@
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog
-from config import RESUME_FILE
+from utils import RESUME_FILE
 from resume.resume import load_resume
 
 # FILE PICKER

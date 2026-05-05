@@ -1,5 +1,5 @@
 import aiosqlite
-from config import DB_NAME
+from utils import DB_NAME
 from ingestion.utils import normalize_url
 
 CREATE_TABLE_QUERY = """

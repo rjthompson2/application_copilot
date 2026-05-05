@@ -1,4 +1,4 @@
-from config import DB_NAME
+from utils import DB_NAME
 from ingestion.enrichment import enrich_job
 from ranking.cache import encode_and_cache
 from ranking.faiss_index import FAISSIndex

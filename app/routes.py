@@ -4,7 +4,7 @@ import aiosqlite
 
 from search.search import search_jobs
 from app.main import templates
-from config import DB_NAME, RESUME_FILE
+from utils import DB_NAME, RESUME_FILE
 import os
 from resume.resume import build_user_profile, load_resume_file, load_resume
 

@@ -3,7 +3,7 @@ import faiss
 import json
 import numpy as np
 import aiosqlite
-from config import DB_NAME, FAISS_INDEX_PATH, FAISS_META_PATH
+from utils import DB_NAME, FAISS_INDEX_PATH, FAISS_META_PATH
 
 async def build_faiss_index():
     index = FAISSIndex(dim=384)
