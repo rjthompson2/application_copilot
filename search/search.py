@@ -42,7 +42,6 @@ async def search_jobs(resume_text: str, profile, k=10):
 
     for i, row in enumerate(results):
         # map job values
-        print(row)
         job = {
             "id": row[0],
             "title": row[1],

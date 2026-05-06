@@ -7,6 +7,7 @@ from app.main import templates
 from utils import DB_NAME, RESUME_FILE
 import os
 from resume.resume import build_user_profile, load_resume, extract_upload
+from ingestion.main import main as ingest_jobs
 
 
 router = APIRouter()
@@ -60,6 +61,12 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
         }
     )
 
+
+@router.post("/load", response_class=HTMLResponse)
+async def load_jobs(request: Request):
+    await ingest_jobs()
+
+    return JSONResponse({"success": True})
 
 @router.post("/save/{job_id}")
 async def save_job(job_id: int):

@@ -8,7 +8,8 @@
 
 <h1>Job Matches</h1>
 
-<button onclick="openModal()">Search Jobs</button>
+<button class ="search-job-btn" onclick="openModal()">Search Jobs</button>
+<button class ="load-job-btn">Load More Jobs</button>
 
 
 <hr>
@@ -103,6 +104,17 @@ function closeModal() {
             if (res.ok) {
                 document.getElementById(`job-${jobId}`).remove();
             }
+        }
+    });
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("load-job-btn")) {
+            const jobId = e.target.dataset.id;
+
+            const res = await fetch(`/load`, {
+                method: "POST"
+            });
+
+            // TODO display loading wheel until res.ok & auto reload webpage with new values
         }
     });
 </script>
