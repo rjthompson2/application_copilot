@@ -68,7 +68,7 @@ async def process_queue(context):
                     data["company"],
                     data["location"],
                     data["description"],
-                    skills_str,  # ✅ normalized skills
+                    skills_str,  # normalized skills
                     data["seniority"],
                     emb_blob,
                     new_hash,
