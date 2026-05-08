@@ -5,6 +5,7 @@ from ranking.faiss_index import FAISSIndex
 from ranking.skills import extract_normalized_skills
 import numpy as np
 import aiosqlite
+import traceback
 
 async def process_queue(context):
     # Load FAISS index once
@@ -81,7 +82,11 @@ async def process_queue(context):
                 print("Processed:", data["title"])
 
             except Exception as e:
-                print("Failed:", url, e)
+                print("Failed:", url)
+                print(f"Exception Type: {type(e).__name__}")
+                print(f"Exception Message: {e}")
+                print("Traceback:")
+                print(traceback.format_exc())
     
     index.save()
     print("FAISS index updated")

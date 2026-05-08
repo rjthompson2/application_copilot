@@ -1,7 +1,7 @@
 import asyncio
 from playwright.async_api import async_playwright
 from database.database import init_db, save_urls
-from application_copilot.ingestion.linkedin_scraper import discover_jobs
+from ingestion.linkedin_scraper import discover_jobs
 from ingestion.process_queue import process_queue
 from config import SEARCH_QUERY, LOCATION
 from utils import STORAGE_FILE

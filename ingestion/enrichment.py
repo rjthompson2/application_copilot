@@ -39,7 +39,11 @@ def parse_meta_title(meta):
     meta = meta.replace(" | LinkedIn", "")
 
     if "|" in meta:
-        title, company = meta.split("|")
+        meta_data = meta.split("|")
+        title = meta_data[0] 
+        company = meta_data[-1]
+        # if len(meta_data > 2):
+            # company = ' | '.join(meta_data[1:]) # TODO implement better detection for multiple '|', also the second | is sometimes the location if it's remote
         return title.strip(), company.strip()
 
     return meta.strip(), ""
