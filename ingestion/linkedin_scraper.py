@@ -6,9 +6,9 @@ async def discover_jobs(context, query, location):
 
     all_links = set()
 
-    for p in range(MAX_PAGES):
+    start = 0
 
-        start = p * 25
+    for p in range(MAX_PAGES):
 
         url = (
             "https://www.linkedin.com/jobs/search/"
@@ -49,6 +49,8 @@ async def discover_jobs(context, query, location):
         if after == before:
             print("No new jobs → stopping pagination")
             break
+
+        start = (p+1) * len(links)
 
     await page.close()
 
