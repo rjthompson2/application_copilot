@@ -17,7 +17,7 @@ async def main(debug=False):
     print("\nTop Matches:\n")
 
     for i, job in enumerate(results, 1):
-        print(f"{i}. {job['title']} @ {job['company']} ({job['location']}) - {job['score']:.2f} | {job['faiss_score']:.2f}")
+        print(f"{i}. {job['title']} @ {job['company']} ({job['location']}) - {job['score']:.2f} | {job['faiss_score']:.2f} ?Shown={job['show']}")
         if debug:
             print("JOB:", job["skills"])
 

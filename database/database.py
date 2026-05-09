@@ -56,6 +56,15 @@ async def get_jobs_without_details():
         return await cursor.fetchall()
 
 
+async def get_jobs():
+    query = """
+    SELECT id, title, company, location, show, status FROM jobs;
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query)
+        return await cursor.fetchall()
+
+
 async def update_job(job_id, description, skills, seniority):
     query = """
     UPDATE jobs
