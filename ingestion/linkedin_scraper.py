@@ -1,27 +1,58 @@
-import asyncio
+from config import MAX_PAGES
 
 
 async def discover_jobs(context, query, location):
     page = await context.new_page()
 
-    url = (
-        f"https://www.linkedin.com/jobs/search/"
-        f"?keywords={query}&location={location}&start=0"
-    )
+    all_links = set()
 
-    await page.goto(url, wait_until="commit", timeout=90000)
-    await page.wait_for_timeout(5000)
+    for p in range(MAX_PAGES):
 
-    # extract URLs only (no DOM dependency)
-    links = await page.locator("a").evaluate_all("""
-        els => els
-            .map(e => e.href)
-            .filter(h => h && h.includes('/jobs/view/'))
-    """)
+        start = p * 25
 
-    links = list(set(links))
+        url = (
+            "https://www.linkedin.com/jobs/search/"
+            f"?keywords={query}"
+            f"&location={location}"
+            f"&start={start}"
+        )
 
-    print(f"Discovered {len(links)} jobs")
+        print(f"Page {p+1}: {url}")
+
+        await page.goto(url, wait_until="domcontentloaded")
+
+        # wait for job cards instead of fixed sleep
+        try:
+            await page.wait_for_selector("a[href*='/jobs/view']", timeout=10000)
+        except:
+            print("No job links found, stopping early")
+            break
+
+        links = await page.eval_on_selector_all(
+            "a[href*='/jobs/view']",
+            "els => els.map(e => e.href)"
+        )
+
+        links = {
+            link.split("?")[0]
+            for link in links
+            if link and "/jobs/view" in link
+        }
+
+        before = len(all_links)
+        all_links.update(links)
+        after = len(all_links)
+
+        print(f"Found {len(links)} links, total {after}")
+
+        # stop if no new results
+        if after == before:
+            print("No new jobs → stopping pagination")
+            break
+
+    await page.close()
+
+    links = list(set(all_links))
 
     return links
 
