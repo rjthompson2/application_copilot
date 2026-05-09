@@ -105,3 +105,34 @@ async def save_urls(urls):
             )
 
         await db.commit()
+
+
+
+async def get_metrics():
+    query = """
+    SELECT id, title, company, location, show, status FROM jobs WHERE status='saved';
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query)
+
+        applied = await cursor.fetchall()
+
+    
+    query = """
+    SELECT id, title, company, location, show, status FROM jobs WHERE status='done' AND show=0;
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query)
+
+        failed = await cursor.fetchall()
+
+    
+    query = """
+    SELECT id, title, company, location, show, status FROM jobs WHERE show=0;
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query)
+
+        total = await cursor.fetchall()
+    
+    return applied, failed, total
