@@ -22,7 +22,6 @@ async def main():
             query=SEARCH_QUERY,
             location=LOCATION
         )
-        print(f"Discovered {len(urls)} jobs")
 
         # 4. SAVE TO DB (queued)
         await save_urls(urls)

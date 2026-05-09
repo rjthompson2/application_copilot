@@ -14,7 +14,7 @@ async def process_queue(context):
     # process jobs
     async with aiosqlite.connect(DB_NAME) as db:
         cursor = await db.execute(
-            "SELECT id, url, embedding_text_hash FROM jobs"# WHERE status='queued'"
+            "SELECT id, url, embedding_text_hash FROM jobs WHERE status='queued'"
         )
         jobs = await cursor.fetchall()
 
