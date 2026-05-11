@@ -65,6 +65,14 @@ async def get_jobs():
         return await cursor.fetchall()
 
 
+async def get_history():
+    query = """
+    SELECT id, title, company, location, description FROM jobs WHERE status='saved';
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query)
+        return await cursor.fetchall()
+
 async def update_job(job_id, description, skills, seniority):
     query = """
     UPDATE jobs
