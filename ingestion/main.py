@@ -1,9 +1,9 @@
 import asyncio
 import aiosqlite
 from playwright.async_api import async_playwright
-from database.database import init_db, save_urls
-from ingestion.linkedin_scraper import discover_jobs
-from ingestion.process_queue import process_queue
+from database.database import init_db
+from ingestion.workers.discover_worker import run_discovery
+from ingestion.workers.process_worker import process_queue
 from config import SEARCH_QUERY, LOCATION
 from utils import STORAGE_FILE, DB_NAME
 
@@ -30,17 +30,14 @@ async def main():
                 await process_queue(context)
 
 
-        # 3. DISCOVER JOBS
-        urls = await discover_jobs(
+        # 3. DISCOVERAND QUEUE JOBS
+        await run_discovery(
             context,
             query=SEARCH_QUERY,
             location=LOCATION
         )
 
-        # 4. SAVE TO DB (queued)
-        await save_urls(urls)
-
-        # 5. ENRICH 
+        # 4. ENRICH 
         await process_queue(context)
         
         await browser.close()
