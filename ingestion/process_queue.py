@@ -88,5 +88,5 @@ async def process_queue(context):
                 print("Traceback:")
                 print(traceback.format_exc())
     
-    index.save()
+            index.save()
     print("FAISS index updated")
