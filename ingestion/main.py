@@ -25,7 +25,9 @@ async def main():
                 "SELECT id, url, embedding_text_hash FROM jobs WHERE status='queued'"
             )
             jobs = await cursor.fetchall()
-            await process_queue(context)
+            if len(jobs) > 0:
+                print("Processing jobs in queue...")
+                await process_queue(context)
 
 
         # 3. DISCOVER JOBS
