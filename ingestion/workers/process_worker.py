@@ -57,6 +57,7 @@ async def process_queue(context):
 
                 if not data:
                     print(f"Skipping invalid {source} job: {url}")
+                    scheduler.health.record_failure(source)
                     continue
                 
 
@@ -73,11 +74,15 @@ async def process_queue(context):
                     f"Processed: {data['title']} from {source}"
                 )
 
+                scheduler.health.record_success(source)
+
             except Exception as e:
 
                 print(f"Failed: {url} from {source}")
 
                 print(traceback.format_exc())
+
+                scheduler.health.record_failure(source)
 
         await page.close()
 
