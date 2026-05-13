@@ -1,0 +1,91 @@
+<!-- templates/header.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Job Matcher</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script src="/static/app.js" defer></script>
+</head>
+
+<body>
+
+<header class="app-header">
+    <div class="header-left">
+        <h1 class="logo">Job Matcher</h1>
+    </div>
+
+    <div class="header-right">
+        <button class="nav-btn" onclick="goHome()">
+            Home
+        </button>
+
+        <button class="nav-btn refresh-btn" id="refreshBtn" onclick="refreshJobs()">
+            <span id="refreshText">Refresh Jobs</span>
+
+            <span id="spinner" class="spinner hidden"></span>
+        </button>
+
+        <button class="nav-btn history-btn" onclick="goHistory()">
+            History
+        </button>
+    </div>
+</header>
+
+<script>
+    function goHome() {
+        window.location.href = "/";
+    }
+
+    async function refreshJobs() {
+        const refreshBtn = document.getElementById("refreshBtn");
+        const spinner = document.getElementById("spinner");
+        const refreshText = document.getElementById("refreshText");
+
+        refreshBtn.classList.add("loading");
+        spinner.classList.remove("hidden");
+
+        refreshText.innerText = "Refreshing...";
+
+        try {
+            // Your backend endpoint
+            const response = await fetch("/load", {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                throw new Error("Refresh failed");
+            }
+
+            refreshText.innerText = "Done!";
+
+            setTimeout(() => {
+                refreshText.innerText = "Refresh Jobs";
+            }, 1500);
+
+        } catch (err) {
+            console.error(err);
+
+            refreshText.innerText = "Failed";
+
+            setTimeout(() => {
+                refreshText.innerText = "Refresh Jobs";
+            }, 2000);
+
+        } finally {
+            spinner.classList.add("hidden");
+            refreshBtn.classList.remove("loading");
+        }
+    }
+
+    function goHistory() {
+        window.location.href = "/history";
+    }
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,115 @@
+{% include "header.html" %}
+
+{% block content %}{% endblock %}
+
+<div class="history-container">
+
+    <div class="history-header">
+
+        <h2>Application History</h2>
+
+        <input
+            type="text"
+            id="historySearch"
+            class="history-search"
+            placeholder="Search jobs..."
+            onkeyup="filterHistoryJobs()"
+        >
+
+    </div>
+
+    {% for job in jobs %}
+
+    <div class="history-job">
+
+        <!-- CLICKABLE HEADER -->
+        <div
+            class="history-job-header"
+            onclick="toggleJob(this)"
+        >
+
+            <div>
+                <h3>{{ job.title }}</h3>
+
+                <p>{{ job.company }}</p>
+            </div>
+
+            <span class="expand-icon">
+                ▼
+            </span>
+
+        </div>
+
+        <!-- EXPANDABLE CONTENT -->
+        <div class="history-job-content hidden">
+
+            <p><strong>Location:</strong> {{ job.location }}</p>
+
+            <a href="{{ job.url }}" target="_blank" class="job-link">
+                View Job Posting
+            </a>
+
+            <div class="history-description">
+                {{ job.description }}
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script>
+    function filterHistoryJobs() {
+
+        const search =
+            document
+                .getElementById("historySearch")
+                .value
+                .toLowerCase();
+
+        const cards =
+            document.querySelectorAll(".history-job");
+
+        cards.forEach(card => {
+
+            const title =
+                card.querySelector("h3")
+                    .innerText
+                    .toLowerCase();
+
+            const company =
+                card.querySelector("p")
+                    .innerText
+                    .toLowerCase();
+
+            const combined =
+                `${title} ${company}`;
+
+            if (combined.includes(search)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    function toggleJob(header) {
+
+        const content =
+            header.nextElementSibling;
+
+        const icon =
+            header.querySelector(".expand-icon");
+
+        content.classList.toggle("hidden");
+
+        if (content.classList.contains("hidden")) {
+            icon.style.transform = "rotate(0deg)";
+        } else {
+            icon.style.transform = "rotate(180deg)";
+        }
+    }
+</script>

@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Job Matcher</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+{% include "header.html" %}
 
-<h1>Job Matches</h1>
+{% block content %}{% endblock %}
 
 <button class ="search-job-btn" onclick="openModal()">Search Jobs</button>
-<button class ="load-job-btn">Load More Jobs</button>
-
-
-<hr>
-
-<div id="resumeModal" class="modal">
+<div id="resumeModal" class="modal hidden">
     <div class="modal-content">
         <h3>Would you like to use a resume?</h3>
 
@@ -41,11 +30,15 @@
 
 <script>
 function openModal() {
-    document.getElementById("resumeModal").style.display = "block";
+    document
+        .getElementById("resumeModal")
+        .classList.remove("hidden");
 }
 
 function closeModal() {
-    document.getElementById("resumeModal").style.display = "none";
+    document
+        .getElementById("resumeModal")
+        .classList.add("hidden");
 }
 </script>
 

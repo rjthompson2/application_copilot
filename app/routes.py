@@ -21,6 +21,40 @@ async def home(request: Request):
     )
 
 
+@router.get("/history", response_class=HTMLResponse)
+async def history(request: Request):
+    async with aiosqlite.connect(DB_NAME) as db:
+
+        cursor = await db.execute("""
+            SELECT id, title, company, location, url, description
+            FROM jobs
+            WHERE status = 'saved'
+            ORDER BY created_at DESC
+        """)
+
+        rows = await cursor.fetchall()
+
+    jobs = [
+        {
+            "id": r[0],
+            "title": r[1],
+            "company": r[2],
+            "location": r[3],
+            "url": r[4],
+            "description": r[5],
+        }
+        for r in rows
+    ]
+
+    return templates.TemplateResponse(
+        "history.html",
+        {
+            "request": request,
+            "jobs": jobs
+        }
+    )
+
+
 @router.post("/search", response_class=HTMLResponse)
 async def run_search(request: Request, file: UploadFile = File(None), use_saved: str = Form(None)):
     resume_text = None
