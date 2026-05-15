@@ -1,5 +1,5 @@
 import asyncio
-from database.database import get_metrics
+from job_database.database import get_metrics
 
 async def main():
     applied, failed, total = await get_metrics()

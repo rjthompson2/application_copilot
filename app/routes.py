@@ -7,7 +7,7 @@ from app.main import templates
 from utils import DB_NAME, RESUME_FILE
 import os
 from resume.resume import build_user_profile, load_resume, extract_upload
-from ingestion.main import main as ingest_jobs
+from job_ingestion.main import main as ingest_jobs
 
 
 router = APIRouter()
@@ -83,7 +83,6 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
             profile = None
 
     # No resume → leave as None
-
     jobs = await search_jobs(resume_text, profile, k=20)
 
     return templates.TemplateResponse(

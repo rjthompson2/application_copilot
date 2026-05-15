@@ -7,9 +7,9 @@ LINKEDIN_URL = (
     "?keywords={query}&location={location}&start={start}"
 )
 
-DB_NAME = BASE_DIR / "application_copilot" / "database" / "jobs.db"
+DB_NAME = BASE_DIR / "application_copilot" / "job_database" / "jobs.db"
 
-STORAGE_FILE = BASE_DIR / "application_copilot" / "ingestion" / "auth.json"
+STORAGE_FILE = BASE_DIR / "application_copilot" / "job_ingestion" / "auth.json"
 
 RESUME_FILE = BASE_DIR / "application_copilot" / "resume" / "file" / "resume.txt"
 

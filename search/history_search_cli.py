@@ -1,4 +1,4 @@
-from database.database import get_history
+from job_database.database import get_history
 import asyncio
 
 async def show_history(job = '', title = ''):

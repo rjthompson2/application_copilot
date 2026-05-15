@@ -19,7 +19,7 @@ MAX_PAGES = 3  # keep low to avoid detection
 
 After you have configured the settings to search for jobs you want, all you need to do is input the command:
 
-python -m ingestion.main
+python -m job_ingestion.main
 
 You must be in the application_copilot directory when you execute the command.
 
