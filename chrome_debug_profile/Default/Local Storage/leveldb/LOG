@@ -1,6 +1,0 @@
-2026/05/14-10:52:14.324 3a03 Reusing MANIFEST /Users/rileythompson/Desktop/cs/application_copilot/chrome_debug_profile/Default/Local Storage/leveldb/MANIFEST-000001
-2026/05/14-10:52:14.328 3a03 Recovering log #3
-2026/05/14-10:52:14.329 3a03 Reusing old log /Users/rileythompson/Desktop/cs/application_copilot/chrome_debug_profile/Default/Local Storage/leveldb/000003.log 
-2026/05/14-10:53:24.745 3503 Level-0 table #5: started
-2026/05/14-10:53:24.753 3503 Level-0 table #5: 76574 bytes OK
-2026/05/14-10:53:24.765 3503 Delete type=0 #3
