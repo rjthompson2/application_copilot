@@ -1,10 +1,14 @@
-def test_ranking_order():
+from ranking.faiss_index import FAISSIndex
 
-    jobs = [
-        {"title": "Backend Engineer", "score": 0.9},
-        {"title": "Frontend Engineer", "score": 0.3},
-    ]
+index = FAISSIndex().load()
 
-    ranked = sorted(jobs, key=lambda x: x["score"], reverse=True)
 
-    assert ranked[0]["title"] == "Backend Engineer"
+def test_faiss_index():
+    assert index.index.ntotal == len(index.job_ids)
+
+def test_embedding():
+    embedding = embed_text(data["embedding_text"])
+
+    assert len(embedding) > 0
+
+    assert embedding[:5]

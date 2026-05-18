@@ -45,7 +45,7 @@ async def process_job(
 
         emb_blob = embedding.tobytes()
         
-        print("FAISS score for url:", index.search(embedding, k=1)[0][0])
+        print("FAISS score for url:", index.search(embedding, k=1)[0]['faiss_score'])
         index.add(job_id, embedding)
 
     skills_list = extract_normalized_skills(

@@ -214,3 +214,4 @@ resume/file/*
 faiss*.index
 faiss*.json
 */logs/*
+*_profile

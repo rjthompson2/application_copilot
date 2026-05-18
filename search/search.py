@@ -6,7 +6,7 @@ from ranking.scoring import compute_resume_score
 from utils import DB_NAME
 
 
-async def search_jobs(resume_text: str, profile, k=10):
+async def search_jobs(resume_text: str, profile, k=None):
     # 1. Embed resume
     resume_embedding = get_embedding(resume_text)
 
@@ -23,6 +23,8 @@ async def search_jobs(resume_text: str, profile, k=10):
 
     job_ids = [r["job_id"] for r in results]
     faiss_scores = [r["faiss_score"] for r in results]
+    print(job_ids)
+    print(faiss_scores)
 
     if not job_ids:
         return []
@@ -32,7 +34,7 @@ async def search_jobs(resume_text: str, profile, k=10):
 
     async with aiosqlite.connect(DB_NAME) as db:
         cursor = await db.execute(
-            f"SELECT id, title, company, location, skills, seniority, url, status, show FROM jobs WHERE id IN ({placeholders})",
+            f"SELECT id, title, company, location, skills, seniority, url, status, show FROM jobs WHERE id IN ({placeholders}) AND show=1",
             job_ids
         )
         results = await cursor.fetchall()

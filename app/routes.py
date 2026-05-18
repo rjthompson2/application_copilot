@@ -83,7 +83,7 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
             profile = None
 
     # No resume → leave as None
-    jobs = await search_jobs(resume_text, profile, k=20)
+    jobs = await search_jobs(resume_text, profile)
 
     return templates.TemplateResponse(
         "index.html",

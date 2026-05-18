@@ -12,7 +12,7 @@ async def main(debug=False):
         print("Profile loaded:")
         print(profile)
 
-    results = await search_jobs(resume_text, profile, k=10)
+    results = await search_jobs(resume_text, profile)
 
     print("\nTop Matches:\n")
 

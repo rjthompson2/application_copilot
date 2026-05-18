@@ -1,7 +1,7 @@
 import traceback
 import aiosqlite
 from utils import DB_NAME
-from ranking.faiss_index import FAISSIndex
+from ranking.faiss_index import get_or_build_index
 from job_ingestion.pipeline import process_job
 from job_ingestion.sources.linkedin import LinkedInSource
 from job_ingestion.sources.indeed import IndeedSource
@@ -12,7 +12,7 @@ from playwright_stealth import stealth_async
 async def process_queue(browser, context):
     
 
-    index = FAISSIndex.load()
+    index = await get_or_build_index()
 
 
 

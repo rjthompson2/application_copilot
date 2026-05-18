@@ -22,7 +22,7 @@ async def main():
 
     resume_text = load_resume_interactive()
     profile = build_user_profile(resume_text)
-    results = await search_jobs(resume_text, profile, k=10)
+    results = await search_jobs(resume_text, profile)
 
 if __name__ == '__main__':
     asyncio.run(main())

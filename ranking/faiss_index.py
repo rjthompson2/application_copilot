@@ -70,12 +70,19 @@ class FAISSIndex:
             return
 
         vec = embedding.astype("float32").reshape(1, -1)
+
+        faiss.normalize_L2(vec)
+
         self.index.add(vec)
         self.job_ids.append(job_id)
 
-    def search(self, embedding: np.ndarray, k=10):
+    def search(self, embedding: np.ndarray, k=None):
         if len(self.job_ids) == 0:
             return []
+        print(len(self.job_ids))
+        
+        if not k:
+            k = len(self.job_ids)
 
         vec = embedding.astype("float32").reshape(1, -1)
 
@@ -90,7 +97,7 @@ class FAISSIndex:
                 "job_id": self.job_ids[i],
                 "faiss_score": float(score)
             })
-
+        print(results)
         return results
     
     def save(self):
