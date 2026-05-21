@@ -79,7 +79,6 @@ class FAISSIndex:
     def search(self, embedding: np.ndarray, k=None):
         if len(self.job_ids) == 0:
             return []
-        print(len(self.job_ids))
         
         if not k:
             k = len(self.job_ids)
@@ -97,7 +96,6 @@ class FAISSIndex:
                 "job_id": self.job_ids[i],
                 "faiss_score": float(score)
             })
-        print(results)
         return results
     
     def save(self):

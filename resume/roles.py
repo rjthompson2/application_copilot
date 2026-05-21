@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from ranking.skills import extract_normalized_skills
+from ranking.skills_map import extract_normalized_skills
 
 ROLE_PATTERN = re.compile(
     r"""

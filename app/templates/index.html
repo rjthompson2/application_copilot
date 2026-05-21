@@ -68,8 +68,31 @@ function closeModal() {
         FAISS: {{ "%.2f"|format(job.faiss_score) if job.faiss_score is defined else "N/A" }} |
         Skill Score: {{ "%.2f"|format(job.skill_score) if job.skill_score is defined else "N/A" }}
     </p>
+    
+    {% if has_resume %}
+    <div class="skills-container">
+        
+        <strong>Matching Skills:</strong>
+        <ul class="matching-skills">
+        {% for match in matching_missing[job.id]['matching'] %}
+        <li>
+            {{ match }}
+        </li>
+        {% endfor %}
+        </ul>   
 
+        <strong>Missing Skills:</strong>
+        <ul class="missing-skills">
+        {% for miss in matching_missing[job.id]['missing'] %}
+        <li>
+            {{ miss }}
+        </li>
+        {% endfor %}
+        </ul>   
+    </div>
+    {% else %}
     <p><strong>Skills:</strong> {{ job.skills }}</p>
+    {% endif %}
 
     <div class="button">
         <button class="save-btn" data-id="{{ job.id }}">Save</button>
@@ -86,17 +109,39 @@ function closeModal() {
 </body>
 
 <script>
+    
+    function openModal() {
+        document
+            .getElementById("resumeModal")
+            .classList.remove("hidden");
+    }
+
+    function closeModal() {
+        document
+            .getElementById("resumeModal")
+            .classList.add("hidden");
+    }
+
+    /* SAVE */
+
     document.addEventListener("click", async (e) => {
+
         if (e.target.classList.contains("save-btn")) {
+
             const jobId = e.target.dataset.id;
 
-            const res = await fetch(`/save/${jobId}`, {
+            await fetch(`/save/${jobId}`, {
                 method: "POST"
             });
         }
     });
+
+    /* DELETE */
+
     document.addEventListener("click", async (e) => {
+
         if (e.target.classList.contains("delete-btn")) {
+
             const jobId = e.target.dataset.id;
 
             const res = await fetch(`/delete/${jobId}`, {
@@ -104,20 +149,13 @@ function closeModal() {
             });
 
             if (res.ok) {
-                document.getElementById(`job-${jobId}`).remove();
+                document
+                    .getElementById(`job-${jobId}`)
+                    .remove();
             }
         }
     });
-    document.addEventListener("click", async (e) => {
-        if (e.target.classList.contains("load-job-btn")) {
-            const jobId = e.target.dataset.id;
 
-            const res = await fetch(`/load`, {
-                method: "POST"
-            });
-
-            // TODO display loading wheel until res.ok & auto reload webpage with new jobs
-        }
-    });
+    
 </script>
 </html>

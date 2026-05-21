@@ -1,23 +1,18 @@
 import re
 import os
-from ranking.skills import extract_normalized_skills
+from ranking.skills_map import extract_normalized_skills
 from resume.roles import extract_roles, parse_years
 import pdfplumber
 import io
 from pypdf import PdfReader
 
 def load_resume_file(path):
-    print(path)
     if path.suffix.lower() == ".pdf":
-        print("\n\n\n\n")
         with pdfplumber.open(path) as pdf:
-            print(pdf.pages)
             return "\n".join(page.extract_text() or "" for page in pdf.pages)
     else:
         with open(path, "r", encoding="utf-8") as f:
-            print(1)
             output = f.read()
-            print(output)
             return output
 
 def parse_resume(text):

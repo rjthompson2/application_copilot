@@ -23,8 +23,6 @@ async def search_jobs(resume_text: str, profile, k=None):
 
     job_ids = [r["job_id"] for r in results]
     faiss_scores = [r["faiss_score"] for r in results]
-    print(job_ids)
-    print(faiss_scores)
 
     if not job_ids:
         return []
@@ -70,10 +68,6 @@ async def search_jobs(resume_text: str, profile, k=None):
             job["faiss_score"] = faiss_scores[i]
 
         final_results.append(job)
-        if job["show"] == 1 or job["show"] == "1":
-            print(job)
-        else:
-            print(job["id"], job["show"])
 
     # sort by final score
     if profile is not None:

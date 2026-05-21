@@ -2,7 +2,7 @@ from utils import DB_NAME
 from job_ingestion.enrichment import enrich_job
 from ranking.cache import encode_and_cache
 from ranking.faiss_index import FAISSIndex
-from ranking.skills import extract_normalized_skills
+from ranking.skills_map import extract_normalized_skills
 import numpy as np
 import aiosqlite
 import traceback

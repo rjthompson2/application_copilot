@@ -1,6 +1,6 @@
 import numpy as np
 
-from ranking.skills import extract_normalized_skills
+from ranking.skills_map import extract_normalized_skills
 from ranking.cache import encode_and_cache
 from job_ingestion.dedupe import JobDeduplicator
 

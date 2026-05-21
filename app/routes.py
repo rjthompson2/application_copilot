@@ -8,6 +8,7 @@ from utils import DB_NAME, RESUME_FILE
 import os
 from resume.resume import build_user_profile, load_resume, extract_upload
 from job_ingestion.main import main as ingest_jobs
+from resume.resume import parse_resume
 
 
 router = APIRouter()
@@ -29,7 +30,7 @@ async def history(request: Request):
             SELECT id, title, company, location, url, description
             FROM jobs
             WHERE status = 'saved'
-            ORDER BY created_at DESC
+            ORDER BY created_at ASC
         """)
 
         rows = await cursor.fetchall()
@@ -84,12 +85,29 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
 
     # No resume → leave as None
     jobs = await search_jobs(resume_text, profile)
+    resume = parse_resume(resume_text)
+    matching_missing = {}
+
+    for job in jobs:
+        skills = job['skills'].split(",")
+
+        matching_skills = [skill for skill in skills if skill in resume["skills"]]
+        missing_skills = [skill for skill in skills if skill not in resume["skills"]]
+
+        if len(missing_skills) == 0:
+            missing_skills = ['none']
+        if len(matching_skills) == 0:
+            matching_skills = ['none']
+
+        matching_missing[job["id"]] = {"matching": matching_skills, "missing": missing_skills}
+    
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "jobs": jobs,
+            "matching_missing": matching_missing,
             "has_resume": profile is not None
         }
     )
