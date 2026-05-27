@@ -167,14 +167,28 @@ async def show_all():
 
         all_jobs = await cursor.fetchall()
         return all_jobs
-    
+
+
+# Clean testing data from db
+async def clean_db():
+    query = """
+        DELETE FROM jobs
+        WHERE source = 'TEST';
+    """
+
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute(query)
+        await db.commit()
+
+
 if __name__ == "__main__":
+    # asyncio.run(clean_db())
     all_jobs = asyncio.run(show_all())
     for job in all_jobs:
         embedding = "None"
         try:
             embedding = job[1][:10]
-        except:
-            pass
-        display = f"{job[0]}\n{embedding} | {job[2]} | {str(bool(job[3]))}\n"
-        print(display)
+    #     except:
+    #         pass
+    #     display = f"{job[0]}\n{embedding} | {job[2]} | {str(bool(job[3]))}\n"
+    #     print(display)

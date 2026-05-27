@@ -5,6 +5,7 @@ from resume.roles import extract_roles, parse_years
 import pdfplumber
 import io
 from pypdf import PdfReader
+import datetime
 
 def load_resume_file(path):
     if path.suffix.lower() == ".pdf":
