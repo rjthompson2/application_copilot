@@ -74,6 +74,17 @@ async def get_history():
         cursor = await db.execute(query)
         return await cursor.fetchall()
 
+
+async def get_title(job_id):
+    query = """
+    SELECT company, title FROM jobs
+    WHERE id = ?
+    """
+    async with aiosqlite.connect(DB_NAME) as db:
+        cursor = await db.execute(query, (job_id,))
+        return await cursor.fetchall()
+
+
 async def update_job(job_id, description, skills, seniority):
     query = """
     UPDATE jobs
@@ -188,7 +199,7 @@ if __name__ == "__main__":
         embedding = "None"
         try:
             embedding = job[1][:10]
-    #     except:
-    #         pass
-    #     display = f"{job[0]}\n{embedding} | {job[2]} | {str(bool(job[3]))}\n"
-    #     print(display)
+        except:
+            pass
+        display = f"{job[0]}\n{embedding} | {job[2]} | {str(bool(job[3]))}\n"
+        print(display)

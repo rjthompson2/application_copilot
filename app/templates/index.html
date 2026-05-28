@@ -94,12 +94,15 @@ function closeModal() {
     <p><strong>Skills:</strong> {{ job.skills }}</p>
     {% endif %}
 
-    <div class="button">
+    <div class="job-actions">
         <button class="save-btn" data-id="{{ job.id }}">Save</button>
+        <button class="delete-btn" data-id="{{ job.id }}">Delete</button>
     </div>
 
-    <div class="button">
-        <button class="delete-btn" data-id="{{ job.id }}">Delete</button>
+    <div class="outreach-actions">
+        <button class="outreach-btn" data-id="{{ job.id }}">
+            Find Contacts
+        </button>
     </div>
     <hr>
 </div>
@@ -153,6 +156,20 @@ function closeModal() {
                     .getElementById(`job-${jobId}`)
                     .remove();
             }
+        }
+    });
+
+    /* OUTREACH */
+
+    document.addEventListener("click", async (e) => {
+
+        if (e.target.classList.contains("outreach-btn")) {
+
+            const jobId = e.target.dataset.id;
+
+            await fetch(`/outreach/${jobId}`, {
+                method: "GET"
+            });
         }
     });
 

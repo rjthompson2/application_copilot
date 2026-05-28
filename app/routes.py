@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
 import aiosqlite
-
+from fastapi.responses import JSONResponse
+from outreach.search import find_contacts
+from outreach.templates import get_outreach_angle
 from search.search import search_jobs
 from app.main import templates
 from utils import DB_NAME, RESUME_FILE
@@ -9,6 +11,8 @@ import os
 from resume.resume import build_user_profile, load_resume, extract_upload
 from job_ingestion.main import main as ingest_jobs
 from resume.resume import parse_resume
+from outreach.provider import GoogleLinkedInProvider, PlaywrightLinkedInProvider
+from outreach.search import set_provider, find_contacts
 
 
 router = APIRouter()
@@ -54,6 +58,36 @@ async def history(request: Request):
             "jobs": jobs
         }
     )
+
+
+@router.get("/outreach/{job_id}")
+async def outreach(job_id: int):
+
+    set_provider(PlaywrightLinkedInProvider())
+    contacts, title = await find_contacts(job_id)
+
+    angle = get_outreach_angle(
+        title
+    )
+
+    if not contacts and not angle:
+        return {
+            "success": False
+        }
+
+    return JSONResponse({
+        "contacts": [
+            {
+                "title": c['title'],
+                "url": c['url'],
+                "score": c['score'],
+                "appearances": c['appearances']
+            }
+            for c in contacts if c['score'] > 0
+        ],
+
+        "suggested_angle": angle
+    })
 
 
 @router.post("/search", response_class=HTMLResponse)
