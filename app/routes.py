@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
 import aiosqlite
-from fastapi.responses import JSONResponse
 from outreach.search import find_contacts
 from outreach.templates import get_outreach_angle
 from search.search import search_jobs
@@ -11,7 +10,7 @@ import os
 from resume.resume import build_user_profile, load_resume, extract_upload
 from job_ingestion.main import main as ingest_jobs
 from resume.resume import parse_resume
-from outreach.provider import GoogleLinkedInProvider, PlaywrightLinkedInProvider
+from outreach.provider import PlaywrightLinkedInProvider
 from outreach.search import set_provider, find_contacts
 
 
@@ -34,7 +33,7 @@ async def history(request: Request):
             SELECT id, title, company, location, url, description
             FROM jobs
             WHERE status = 'saved'
-            ORDER BY created_at ASC
+            ORDER BY created_at DESC
         """)
 
         rows = await cursor.fetchall()
@@ -89,6 +88,14 @@ async def outreach(job_id: int):
         "suggested_angle": angle
     })
 
+@router.get("/waiting", response_class=HTMLResponse)
+async def loading_screen(request: Request):
+    return templates.TemplateResponse(
+        "loading.html",
+        {
+            "request": request
+        }
+    )
 
 @router.post("/search", response_class=HTMLResponse)
 async def run_search(request: Request, file: UploadFile = File(None), use_saved: str = Form(None)):
