@@ -161,30 +161,46 @@ function closeModal() {
 
             var popup = window.open("waiting", "myPopup");
 
+            const jobId = e.target.dataset.id; 
+            var data = null;
+
             // Copy to clipboard
             // TODO In the future, try to find their emails to avoid 200 word limit
             const clipboardText = "Hello {name},\n\nMy name is Riley Thompson and I am interested in the {position} position at {company}. Please if you have the time, see my resume here: https://tinyurl.com/rtvaA\n\nThank you!"
             navigator.clipboard.writeText(clipboardText);
 
+            
+            //Check if results are already stored
+            const sessionData = sessionStorage.getItem(jobId);
 
-            const jobId = e.target.dataset.id; //TODO save results locally to enable clicking through each contact, saving time, and preventing multiple messages.
+            if (sessionData) {
+                data = JSON.parse(sessionData);
+                console.log("Saved data retrieved!")
+    
+            } else {
+                // Fetches results if not stored
+                const response = await fetch(`/outreach/${jobId}`, {
+                    method: "GET"
+                });
+                data = await response.json()
+                console.log("No data saved.")
+            }
 
-            const response = await fetch(`/outreach/${jobId}`, {
-                method: "GET"
-            });
-
-            const data = await response.json()
-            console.log(data.contacts)
-
-            if (!data.contacts) {
+            if ((!data) || (data.contacts == [])) {
+                popup.close();
                 alert("No confident LinkedIn match found.")
                 return
             }
 
+
+            // Get and remove first value
             const contact = data.contacts.shift(0);
 
-            console.log(contact.url)
+            // Store results for fast retrieval, deduplication, and iteration
+            sessionStorage.setItem(jobId, JSON.stringify({"contacts": data.contacts}));
+            console.log("Data stored.")
 
+            // Navigate to url
             popup.location = contact.url
         }
     });
