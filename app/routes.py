@@ -158,23 +158,6 @@ async def loading_screen(request: Request):
         }
     )
 
-@router.post("/search", response_class=HTMLResponse)
-async def run_search(request: Request, file: UploadFile = File(None), use_saved: str = Form(None)):
-    resume_text = None
-    profile = None
-
-    # Upload new resume
-    if file and file.filename:
-        resume_text = await extract_upload(file)
-        RESUME_FILE.write_text(resume_text, encoding="utf-8")
-        
-        profile = build_user_profile(resume_text)
-    
-    # Use saved doesn't exist
-    elif use_saved == "true" and not os.path.exists(RESUME_FILE):
-        print("Error: File does not exist")
-        profile = None
-
 
 @router.post("/load", response_class=HTMLResponse)
 async def load_jobs(request: Request):
@@ -216,4 +199,14 @@ async def settings(request: Request):
     with open(CONFIG_PATH, "w") as config_file:
         config_file.write(config_string)
 
+    return RedirectResponse("/settings", status_code=303)
+
+@router.post("/settings/resume", response_class=HTMLResponse)
+async def upload_resume(request: Request, file: UploadFile = File(None)):
+    # Upload new resume
+    if not file or not file.filename:
+        return RedirectResponse("/settings", status_code=400)
+    
+    resume_text = await extract_upload(file)
+    RESUME_FILE.write_text(resume_text, encoding="utf-8")
     return RedirectResponse("/settings", status_code=303)
