@@ -18,8 +18,3 @@ RESUME_FILE = BASE_DIR / "application_copilot" / "resume" / "file" / "resume.txt
 
 FAISS_INDEX_PATH = BASE_DIR / "application_copilot" / "ranking" / "faiss.index"
 FAISS_META_PATH = BASE_DIR / "application_copilot" / "ranking" / "faiss_meta.json"
-
-SKILL_KEYWORDS = [
-    "python", "java", "go", "aws", "docker", "kubernetes",
-    "sql", "react", "node", "typescript", "gcp", "azure"
-]

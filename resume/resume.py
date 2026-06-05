@@ -1,5 +1,4 @@
 import re
-import os
 from ranking.skills_map import extract_normalized_skills
 from resume.roles import extract_roles, parse_years
 import pdfplumber
@@ -16,17 +15,18 @@ def load_resume_file(path):
             output = f.read()
             return output
 
-def parse_resume(text):
+def parse_resume(text:str):
+    if not text:
+        return {
+            "skills": {},
+            "experience_years": 0,
+            "roles": [],
+            "raw_text": ""
+        }
+    
     text = text.lower()
-
-    # very simple skill extraction baseline
-    skill_keywords = [
-        "python", "java", "c++", "javascript", "typescript",
-        "aws", "docker", "kubernetes", "sql", "react", "node",
-        "flask", "fastapi", "django"
-    ]
-
-    skills = [s for s in skill_keywords if s in text]
+    
+    skills = extract_normalized_skills(text)
 
     # crude experience detection
     years = re.findall(r"(\d+)\+?\s+years", text)
@@ -54,11 +54,6 @@ def load_resume(path):
 
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
-
-KNOWN_SKILLS = [
-    "python", "aws", "sql", "java", "docker",
-    "flask", "react", "javascript", "typescript"
-]
 
 
 def extract_years(text):

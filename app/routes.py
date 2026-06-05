@@ -13,6 +13,7 @@ from resume.resume import parse_resume
 from outreach.provider import PlaywrightLinkedInProvider
 from outreach.search import set_provider, find_contacts
 from config import SEARCH_QUERY, LOCATION
+import traceback
 
 
 router = APIRouter()
@@ -29,7 +30,8 @@ async def home(request: Request):
             resume_text = load_resume(RESUME_FILE)
             profile = build_user_profile(resume_text)
         except Exception as e:
-            print(e)
+            print("ERROR:", e)
+            print("TRACEBACK:", traceback.format_exc())
             resume_text = None
             profile = None
     else:

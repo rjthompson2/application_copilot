@@ -10,13 +10,29 @@
 <body>
 
     {% include "header.html" %}
+    <div id="resumeModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Please upload your resume.</h3>
+
+            <!-- Upload new -->
+            <form method="post" action="/search" enctype="multipart/form-data">
+                <div>
+                    <input type="file" name="file">
+                </div>
+                <div>
+                    <button type="submit">Upload</button>
+                </div>
+            </form>
+
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
 
     <div class="settings-page">
 
         <div class="settings-card">
             <div class="settings-header">
-                <h1>Settings</h1>
-                <p>Configure your preferences.</p>
+                <h1>General Preferences</h1>
             </div>
 
             <form method="POST" action="/settings/save">
@@ -69,11 +85,33 @@
                 </div>
 
             </form>
+            
 
+        </div>
+        <div class="settings-card">
+            <div class="settings-header">
+                <h1>Resume Upload</h1>
+                <button class ="upload-resume-btn" onclick="openModal()">Upload Resume</button>
+            </div>
         </div>
 
     </div>
 
 </body>
+
+
+<script>
+    function openModal() {
+        document
+            .getElementById("resumeModal")
+            .classList.remove("hidden");
+    }
+
+    function closeModal() {
+        document
+            .getElementById("resumeModal")
+            .classList.add("hidden");
+    }
+</script>
 
 </html>
