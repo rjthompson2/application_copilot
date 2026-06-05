@@ -37,20 +37,6 @@
     </div>
 </div>
 
-<script>
-function openModal() {
-    document
-        .getElementById("resumeModal")
-        .classList.remove("hidden");
-}
-
-function closeModal() {
-    document
-        .getElementById("resumeModal")
-        .classList.add("hidden");
-}
-</script>
-
 {% if has_resume %}
 <p style="color:green;">Using resume-based ranking</p>
 {% else %}
@@ -159,16 +145,16 @@ function closeModal() {
 
         if (e.target.classList.contains("outreach-btn")) {
 
-            var popup = window.open("waiting", "myPopup");
-
-            const jobId = e.target.dataset.id; 
-            var data = null;
-
             // Copy to clipboard
             // TODO In the future, try to find their emails to avoid 200 word limit
             const clipboardText = "Hello {name},\n\nMy name is Riley Thompson and I am interested in the {position} position at {company}. Please if you have the time, see my resume here: https://tinyurl.com/rtvaA\n\nThank you!"
             navigator.clipboard.writeText(clipboardText);
 
+            // Open new tab for redirection
+            var popup = window.open("waiting", "myPopup");
+
+            const jobId = e.target.dataset.id; 
+            var data = null;
             
             //Check if results are already stored
             const sessionData = sessionStorage.getItem(jobId);
@@ -186,9 +172,9 @@ function closeModal() {
                 console.log("No data saved.")
             }
 
-            if ((!data) || (data.contacts == [])) {
+            if ((!data) || (data.contacts.length == 0)) {
                 popup.close();
-                alert("No confident LinkedIn match found.")
+                alert("No confident LinkedIn match found.");
                 return
             }
 

@@ -8,13 +8,15 @@ from config import SEARCH_QUERY, LOCATION
 from utils import STORAGE_FILE, DB_NAME
 
 
-async def main():
+async def main(headles_value=True):
     # 1. INIT DATABASE
     await init_db()
 
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await p.chromium.launch(
+            headless=headles_value
+        )
 
         context = await browser.new_context(
             viewport={"width": 1366, "height": 768}
@@ -44,4 +46,4 @@ async def main():
         await context.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main(headles_value=False))

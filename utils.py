@@ -7,6 +7,9 @@ LINKEDIN_URL = (
     "?keywords={query}&location={location}&start={start}"
 )
 
+
+CONFIG_PATH = BASE_DIR / "application_copilot" / "config.py"
+
 DB_NAME = BASE_DIR / "application_copilot" / "job_database" / "jobs.db"
 
 STORAGE_FILE = BASE_DIR / "application_copilot" / "job_ingestion" / "auth.json"

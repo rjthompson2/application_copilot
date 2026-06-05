@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Request, Form, UploadFile, File
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 import aiosqlite
 from outreach.search import find_contacts
 from outreach.templates import get_outreach_angle
 from search.search import search_jobs
 from app.main import templates
-from utils import DB_NAME, RESUME_FILE
+from utils import DB_NAME, RESUME_FILE,CONFIG_PATH
 import os
 from resume.resume import build_user_profile, load_resume, extract_upload
 from job_ingestion.main import main as ingest_jobs
 from resume.resume import parse_resume
 from outreach.provider import PlaywrightLinkedInProvider
 from outreach.search import set_provider, find_contacts
+from config import SEARCH_QUERY, LOCATION
 
 
 router = APIRouter()
@@ -19,9 +20,48 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    resume_text = None
+    profile = None
+
+    # Use saved resume
+    if os.path.exists(RESUME_FILE):
+        try:
+            resume_text = load_resume(RESUME_FILE)
+            profile = build_user_profile(resume_text)
+        except Exception as e:
+            print(e)
+            resume_text = None
+            profile = None
+    else:
+        return RedirectResponse("/settings", status_code=307)
+
+    # No resume → leave as None
+    jobs = await search_jobs(resume_text, profile)
+    resume = parse_resume(resume_text)
+    matching_missing = {}
+
+    for job in jobs:
+        skills = job['skills'].split(",")
+
+        matching_skills = [skill for skill in skills if skill in resume["skills"]]
+        missing_skills = [skill for skill in skills if skill not in resume["skills"]]
+
+        if len(missing_skills) == 0:
+            missing_skills = ['none']
+        if len(matching_skills) == 0:
+            matching_skills = ['none']
+
+        matching_missing[job["id"]] = {"matching": matching_skills, "missing": missing_skills}
+    
+
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "jobs": []}
+        {
+            "request": request,
+            "jobs": jobs,
+            "matching_missing": matching_missing,
+            "has_resume": profile is not None
+        }
     )
 
 
@@ -69,10 +109,13 @@ async def outreach(job_id: int):
         title
     )
 
-    if not contacts and not angle:
+    if not contacts:
         return {
+            "contacts": [],
             "success": False
         }
+
+    print(contacts)
 
     return JSONResponse({
         "contacts": [
@@ -87,6 +130,22 @@ async def outreach(job_id: int):
 
         "suggested_angle": angle
     })
+
+
+@router.get("/settings", response_class=HTMLResponse)
+async def settings(request: Request):
+    settings = {
+        "Search Query": SEARCH_QUERY,
+        "Location": LOCATION
+    }
+    
+    return templates.TemplateResponse(
+        "settings.html",
+        {
+            "request": request, 
+            "settings": settings
+        }
+    )
 
 @router.get("/waiting", response_class=HTMLResponse)
 async def loading_screen(request: Request):
@@ -114,45 +173,6 @@ async def run_search(request: Request, file: UploadFile = File(None), use_saved:
         print("Error: File does not exist")
         profile = None
 
-    # Use saved resume
-    elif use_saved == "true":
-        try:
-            resume_text = load_resume(RESUME_FILE)
-            profile = build_user_profile(resume_text)
-        except Exception as e:
-            print(e)
-            resume_text = None
-            profile = None
-
-    # No resume → leave as None
-    jobs = await search_jobs(resume_text, profile)
-    resume = parse_resume(resume_text)
-    matching_missing = {}
-
-    for job in jobs:
-        skills = job['skills'].split(",")
-
-        matching_skills = [skill for skill in skills if skill in resume["skills"]]
-        missing_skills = [skill for skill in skills if skill not in resume["skills"]]
-
-        if len(missing_skills) == 0:
-            missing_skills = ['none']
-        if len(matching_skills) == 0:
-            matching_skills = ['none']
-
-        matching_missing[job["id"]] = {"matching": matching_skills, "missing": missing_skills}
-    
-
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "jobs": jobs,
-            "matching_missing": matching_missing,
-            "has_resume": profile is not None
-        }
-    )
-
 
 @router.post("/load", response_class=HTMLResponse)
 async def load_jobs(request: Request):
@@ -176,3 +196,22 @@ async def delete_job(job_id: int):
         await db.commit()
 
     return JSONResponse({"success": True, "job_id": job_id})
+
+@router.post("/settings/save", response_class=HTMLResponse)
+async def settings(request: Request):
+    print("Saving...")
+    form = await request.form()
+
+    
+    config_string = ""
+    for key, value in form.items():
+        key = key.replace(" ", "_").upper()
+        config_string += key + ' = "' + value + '"\n'
+        print(key+":", value)
+    
+    config_string += 'MAX_PAGES = 3'
+
+    with open(CONFIG_PATH, "w") as config_file:
+        config_file.write(config_string)
+
+    return RedirectResponse("/settings", status_code=303)

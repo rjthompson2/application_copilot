@@ -47,6 +47,7 @@ class PlaywrightLinkedInProvider:
         }
 
         output = []
+        browser = None
 
         try:
 
@@ -55,7 +56,11 @@ class PlaywrightLinkedInProvider:
                 browser = await p.chromium.launch(headless=False)
                 print("Launching Playwright...")
 
-                page = await browser.new_page()
+                context = await browser.new_context(
+                    viewport={"width": 1366, "height": 768}
+                )
+
+                page = await context.new_page()
 
 
                 for q, query in queries.items():
@@ -67,10 +72,9 @@ class PlaywrightLinkedInProvider:
 
                     await page.goto(
                         url,
-                        wait_until="domcontentloaded",
-                        timeout=15000
+                        wait_until="load"
                     )
-                    time.sleep(5)
+                    await page.wait_for_selector("h2", timeout=10000)
                     print("Page Loaded.")
 
                     results = await page.query_selector_all(
@@ -91,11 +95,12 @@ class PlaywrightLinkedInProvider:
                             "source": "duckduckgo"
                         })
                     
-            await browser.close()
+                await browser.close()
             return output
 
         except Exception as e:
-                await browser.close()
+                if browser:
+                    await browser.close()
                 print("ERROR IN PLAYWRIGHT:", repr(e))
 
                 return []

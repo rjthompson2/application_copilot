@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" href="/static/settings.css">
+</head>
+
+<body>
+
+    {% include "header.html" %}
+
+    <div class="settings-page">
+
+        <div class="settings-card">
+            <div class="settings-header">
+                <h1>Settings</h1>
+                <p>Configure your preferences.</p>
+            </div>
+
+            <form method="POST" action="/settings/save">
+
+                {% for key, value in settings.items() %}
+                <div class="setting-row">
+
+                    <div class="setting-info">
+                        <label for="{{ key }}">
+                            {{ key.replace('_', ' ').title() }}
+                        </label>
+                    </div>
+
+                    <div class="setting-control">
+
+                        {% if value is boolean %}
+                        <label class="switch">
+                            <input
+                                type="checkbox"
+                                id="{{ key }}"
+                                name="{{ key }}"
+                                {% if value %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+
+                        {% elif value is number %}
+                        <input
+                            type="number"
+                            id="{{ key }}"
+                            name="{{ key }}"
+                            value="{{ value }}">
+
+                        {% else %}
+                        <input
+                            type="text"
+                            id="{{ key }}"
+                            name="{{ key }}"
+                            value="{{ value }}">
+                        {% endif %}
+
+                    </div>
+
+                </div>
+                {% endfor %}
+
+                <div class="settings-actions">
+                    <button type="submit" class="save-btn">
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

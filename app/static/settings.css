@@ -1,0 +1,134 @@
+body {
+    margin: 0;
+    background: #f4f6f9;
+    font-family: Inter, Arial, sans-serif;
+}
+
+.settings-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.settings-header {
+    margin-bottom: 30px;
+}
+
+.settings-header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.settings-header p {
+    margin-top: 8px;
+    color: #666;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid #ececec;
+}
+
+.setting-row:last-child {
+    border-bottom: none;
+}
+
+.setting-info label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #222;
+}
+
+.setting-control {
+    min-width: 300px;
+    text-align: right;
+}
+
+.setting-control input[type="text"],
+.setting-control input[type="number"] {
+    width: 280px;
+    padding: 10px 14px;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.setting-control input[type="text"]:focus,
+.setting-control input[type="number"]:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.settings-actions {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.save-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Toggle Switch */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 999px;
+    transition: .25s;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: .25s;
+}
+
+.switch input:checked + .slider {
+    background: #2563eb;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(26px);
+}
