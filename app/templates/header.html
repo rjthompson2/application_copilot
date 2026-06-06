@@ -44,37 +44,33 @@
 
         refreshText.innerText = "Refreshing...";
 
-        try {
-            // Your backend endpoint
-            const response = await fetch("/load", {
-                method: "POST"
-            });
+        // Your backend endpoint
+        await fetch("/load", {
+            method: "POST"
+        });
 
-            if (!response.ok) {
-                throw new Error("Refresh failed");
+        const poll = setInterval(async () => {
+
+            const response = await fetch("/load/status");
+            const data = await response.json();
+
+            if (data.success) {
+
+                clearInterval(poll);
+
+                spinner.classList.add("hidden");
+                refreshBtn.classList.remove("loading");
+
+
+                setTimeout(() => {
+                    refreshText.innerText = "Refresh Jobs";
+                }, 1500);
             }
 
-            refreshText.innerText = "Done!";
-
-            setTimeout(() => {
-                refreshText.innerText = "Refresh Jobs";
-            }, 1500);
-
-        } catch (err) {
-            console.error(err);
-
-            refreshText.innerText = "Failed";
-
-            setTimeout(() => {
-                refreshText.innerText = "Refresh Jobs";
-            }, 2000);
-
-        } finally {
-            spinner.classList.add("hidden");
-            refreshBtn.classList.remove("loading");
-        }
+        }, 1000);
     }
 
+       
     function goHistory() {
         window.location.href = "/history";
     }

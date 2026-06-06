@@ -11,12 +11,6 @@
 
 {% include "header.html" %}
 
-{% if has_resume %}
-<p style="color:green;">Using resume-based ranking</p>
-{% else %}
-<p style="color:gray;">Showing general job matches</p>
-{% endif %}
-
 {% for job in jobs %}
 {% if job.show == 1 %}
 <div class="job-card" id="job-{{ job.id }}">

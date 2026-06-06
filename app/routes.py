@@ -14,6 +14,7 @@ from outreach.provider import PlaywrightLinkedInProvider
 from outreach.search import set_provider, find_contacts
 from config import SEARCH_QUERY, LOCATION
 import traceback
+import asyncio
 
 
 router = APIRouter()
@@ -161,9 +162,16 @@ async def loading_screen(request: Request):
 
 @router.post("/load", response_class=HTMLResponse)
 async def load_jobs(request: Request):
-    await ingest_jobs()
+    asyncio.create_task(ingest_jobs())
 
-    return JSONResponse({"success": True})
+    return JSONResponse({"started": True})
+
+@router.get("/load/status")
+async def status():
+
+    return {
+        "success": True
+    }
 
 @router.post("/save/{job_id}")
 async def save_job(job_id: int):

@@ -1,31 +1,9 @@
 # application_copilot
 Copilot to help with job applications
 
-# Step 1 Configuration
+# Instructions
 
-Within application_copilot folder, create config.py
-
-Add the following into your file:
-
-SEARCH_QUERY = "" # enter what job you wish to look for
-
-LOCATION = "" # enter where you wish to be located, remote will always be included no matter where you put
-
-MAX_PAGES = 3  # keep low to avoid detection
-
-
-
-# Step 2 Ingestion
-
-After you have configured the settings to search for jobs you want, all you need to do is input the command:
-
-python -m job_ingestion.main
-
-You must be in the application_copilot directory when you execute the command.
-
-
-
-# Step 3 Frontend
+Change your directory to application_copilot.
 
 Input this command while still in the application_copilot directory:
 
@@ -34,3 +12,7 @@ univorn app.main:app --reload
 Next, open your browser and input the following URL:
 
 127.0.0.1:8000
+
+If you are not redirected to the settings tab, click the Settings button in the header.
+Input your information and press the save button. Upload your resume with the Upload Resume button.
+Then, hit the Home button and finall the Refresh Jobs Button. It will take a while to populate the page.
