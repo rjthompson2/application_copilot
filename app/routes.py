@@ -58,8 +58,9 @@ async def home(request: Request):
     
 
     return templates.TemplateResponse(
-        "index.html",
-        {
+        request=request,
+        name="index.html",
+        context={
             "request": request,
             "jobs": jobs,
             "matching_missing": matching_missing,
@@ -94,8 +95,9 @@ async def history(request: Request):
     ]
 
     return templates.TemplateResponse(
-        "history.html",
-        {
+        request=request,
+        name="history.html",
+        context={
             "request": request,
             "jobs": jobs
         }
@@ -143,8 +145,9 @@ async def settings(request: Request):
     }
     
     return templates.TemplateResponse(
-        "settings.html",
-        {
+        request=request,
+        name="settings.html",
+        context={
             "request": request, 
             "settings": settings
         }
@@ -153,8 +156,9 @@ async def settings(request: Request):
 @router.get("/waiting", response_class=HTMLResponse)
 async def loading_screen(request: Request):
     return templates.TemplateResponse(
-        "loading.html",
-        {
+        request=request,
+        name="loading.html",
+        context={
             "request": request
         }
     )
