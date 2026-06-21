@@ -12,7 +12,8 @@ async def process_job(
     index,
     job_id,
     old_hash,
-    data
+    data,
+    db_save=True
 ):
     # Check bot detection
 
@@ -45,8 +46,9 @@ async def process_job(
 
         emb_blob = embedding.tobytes()
         
-        print("FAISS embedding complete.")
-        index.add(job_id, embedding)
+        if db_save:
+            print("FAISS embedding complete.")
+            index.add(job_id, embedding)
 
     skills_list = extract_normalized_skills(
         data["description"]
@@ -55,6 +57,13 @@ async def process_job(
     skills_str = ",".join(
         sorted(set(skills_list))
     )
+
+    if not db_save:
+        return {
+            "embedding": embedding,
+            "emb_blob": emb_blob,
+            "skills_list": skills_list
+        }
 
     await db.execute("""
         UPDATE jobs

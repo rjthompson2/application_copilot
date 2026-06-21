@@ -7,11 +7,11 @@ REQUIRED_FIELDS = ["title", "company", "location"]
 
 # CONFIDENCE WEIGHTS
 CONFIDENCE = {
-    "meta": .99,
-    "jsonld": 0.95,
-    "dom": 0.7,
+    "meta": .8,
+    "jsonld": 0.99,
+    "dom": 0.9,
     "title_parse": 0.75,
-    "description": 1.0,
+    "description": 0.3,
     "body": 0.4
 }
 
@@ -25,7 +25,7 @@ def choose_best(candidates):
     best_score = -1
 
     for val, score in candidates:
-        if val and score > best_score:
+        if val and val != "" and score > best_score:
             best_val = val.strip()
             best_score = score
 
@@ -135,21 +135,14 @@ async def enrich_job(page, url):
     section = page.locator("h2:has-text('About the job')")
     description = ""
 
-    if await section.count() > 0:
-        try:
-            container = section.locator("xpath=ancestor::*[3]")
-            description = await container.inner_text()
-        except:
-            description = ""
+    if isinstance(data, dict):
+        description = data.get("description", "")
 
-    # fallback
-    if not description:
-        try:
-            description = await page.locator(
-                ".jobs-description__content"
-            ).first.inner_text()
-        except:
-            description = ""
+    # content = await page.content()
+    # with open("linkedin.html", "w", encoding="utf8") as f:
+    #     f.write(content)
+    # print("Description:", description)
+    
 
     # 6. LOCATION (DOM)
     location_dom = ""
@@ -188,17 +181,30 @@ async def enrich_job(page, url):
         (title_meta, CONFIDENCE["meta"]),
         (title_json, CONFIDENCE["jsonld"])
     ])
+    # print({
+    #     "title_meta": (title_meta, CONFIDENCE["meta"]),
+    #     "title_json": (title_json, CONFIDENCE["jsonld"])
+    # })
 
     company = choose_best([
         (company_meta, CONFIDENCE["meta"]),
         (company_json, CONFIDENCE["jsonld"]),
     ])
+    # print({
+    #     "company_meta": (company_meta, CONFIDENCE["meta"]),
+    #     "company_json": (company_json, CONFIDENCE["jsonld"]),
+    # })
 
     location = choose_best([
         (location_dom, CONFIDENCE["dom"]),
         (location_body, CONFIDENCE["body"]),
         (location_desc, CONFIDENCE["description"])
     ])
+    # print({
+    #     "location_dom": (location_dom, CONFIDENCE["dom"]),
+    #     "location_body": (location_body, CONFIDENCE["body"]),
+    #     "location_desc": (location_desc, CONFIDENCE["description"])
+    # })
 
     # 9. VALIDATION
     field_map = {
@@ -206,6 +212,9 @@ async def enrich_job(page, url):
         "company": company,
         "location": location,
     }
+    # print({
+    #     "Picked": field_map
+    # })
 
     missing = [k for k, v in field_map.items() if v != ""]
 
